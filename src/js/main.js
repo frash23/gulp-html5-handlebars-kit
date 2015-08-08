@@ -2,5 +2,5 @@
  * object so you can call properties from it in your console for
  * testing */
 
-import * as mod from './Module.js';
+import * as mod from './Module';
 window.mod = mod;

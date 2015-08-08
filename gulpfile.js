@@ -27,10 +27,15 @@ const HTMLMIN_OPTS = {
 
 const WEBPACK_OPTS = {
 	target:'web',
+	output: { filename: '[name].js' },
 	module: {
-		loaders: [ { loader: 'babel-loader' } ],
+		loaders: [ { loader: 'babel-loader?compact=false' } ],
 		cache: true
 	}
+};
+
+const UGLIFY_OPTS = {
+	preserveComments: 'some'
 };
 
 const DIST_PATH = './dist/';
@@ -46,8 +51,7 @@ const DIST = {
 	'HTML': DIST_PATH,
 	'CSS_PATH': DIST_PATH,
 	'CSS_NAME': 'style.css',
-	'ES5_PATH': DIST_PATH,
-	'ES5_NAME': 'scripts.js'
+	'JS_PATH': DIST_PATH +'/js'
 };
 
 // Load dependencies & plugins
@@ -94,10 +98,17 @@ gulp.task('css', function() {
 
 /* Bundle src/js and transpile it to ES5 */
 gulp.task('javascript', function() {
-	return gulp.src(SRC.JS +'/main.js')
+	return gulp.src(SRC.JS +'/*.js')
 		.pipe( gp.webpack(WEBPACK_OPTS) )
-		.pipe( gp.rename(DIST.ES5_NAME) )
-		.pipe( gulp.dest(DIST.ES5_PATH) );
+		.pipe( gulp.dest(DIST.JS_PATH) );
+});
+
+/* Produce scripts.min.js */
+gulp.task('uglify', ['javascript'], function() {
+	return gulp.src(DIST.JS_PATH +'/*.js')
+		.pipe( gp.uglify(UGLIFY_OPTS) )
+		.pipe( gp.rename({extname: '.min.js'}) )
+		.pipe( gulp.dest(DIST.JS_PATH) )
 });
 
 /* Remove everything in dist/ */
@@ -118,4 +129,4 @@ gulp.task('watch', function() {
 });
 
 /* Clean dist/, optimize images & run default task */
-gulp.task('dist', ['clean', 'images', 'default']);
+gulp.task('dist', ['clean', 'images', 'default', 'uglify']);

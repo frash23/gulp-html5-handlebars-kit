@@ -1,7 +1,18 @@
 @import 'normalize.css';
 
-$font-stack: Verdana, Sans-Serif;
+$font-stack: Arial, Sans-Serif;
 
-html {
+html, body {
 	font-family: $font-stack;
+	height: 100%;
+	overflow: auto;
+}
+
+.container {
+	box-shadow: 0 0 10px #777;
+	box-sizing: border-box;
+	min-height: 100%;
+	margin: 0 auto;
+	padding: 20px;
+	width: 740px;
 }
