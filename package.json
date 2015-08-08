@@ -1,0 +1,27 @@
+{
+	"name": "gulp-ES15-boilerplate",
+	"description": "Blank website with all the tools ready & configured for actual work",
+	"README": "README.md",
+	"repository": "frash23/gulp-ES15-boilerplate",
+	"author": "Jacob Pedersen <jacob@bytesizedpacket.com> (https://jacobpedersen.me)",
+	"license": "UNLICENSED",
+
+	"devDependencies": {
+		"gulp": "3.9.x",
+		"rimraf": "2.4.x",
+		"gulp-load-plugins": "*",
+		"gulp-rename": "1.2.x",
+		"gulp-cached": "1.1.x",
+		"gulp-htmlmin": "1.1.x",
+		"gulp-imagemin": "2.3.x",
+		"imagemin-mozjpeg": "5.1.x",
+		"gulp-sass": "2.0.x",
+		"gulp-csso": "1.0.x",
+		"gulp-myth": "1.0.x",
+		"gulp-webpack": "1.5.x",
+		"babel-loader": "5.3.x",
+		"gulp-uglify": "1.2.x"
+	},
+
+	"engine": "node >= 0.12.x"
+}
