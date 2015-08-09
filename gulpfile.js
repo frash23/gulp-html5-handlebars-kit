@@ -41,17 +41,19 @@ const UGLIFY_OPTS = {
 const DIST_PATH = './dist/';
 const SRC_PATH = './src/';
 const SRC = {
-	'IMG': SRC_PATH +'images',
-	'HTML': SRC_PATH +'html',
-	'CSS': SRC_PATH +'css',
-	'JS': SRC_PATH +'js'
+	'IMG': SRC_PATH +'/images',
+	'HTML': SRC_PATH +'/html',
+	'CSS': SRC_PATH +'/css',
+	'JS': SRC_PATH +'/js',
+	'STATIC': SRC_PATH +'/static'
 };
 const DIST = {
-	'IMG': DIST_PATH +'images',
+	'IMG': DIST_PATH +'/images',
 	'HTML': DIST_PATH,
 	'CSS_PATH': DIST_PATH,
-	'CSS_NAME': 'style.css',
-	'JS_PATH': DIST_PATH +'/js'
+	'CSS_NAME': '/style.css',
+	'JS_PATH': DIST_PATH +'/js',
+	'STATIC_PATH': DIST_PATH +'/static'
 };
 
 // Load dependencies & plugins
@@ -71,8 +73,9 @@ var mkdir = function(path) {
 // -----------------
 /* Minify HTML */
 gulp.task('html', function() {
-	return gulp.src(SRC.HTML +'/**')
+	return gulp.src([SRC.HTML +'/**', '!'+ SRC.HTML +'/**/*.inc*'])
 		.pipe( gp.cached('html') )
+		.pipe( gp.preprocess() )
 		.pipe( gp.htmlmin(HTMLMIN_OPTS) )
 		.pipe( gulp.dest(DIST.HTML) );
 });
@@ -80,7 +83,7 @@ gulp.task('html', function() {
 /* Optimize images */
 gulp.task('images', function() {
 	return gulp.src(SRC.IMG +'/**')
-		.pipe( gp.cached('images') )
+		.pipe( gp.cached('images', {optimizeMemory: true}) )
 		.pipe( gp.imagemin(IMAGEMIN_OPTS) )
 		.pipe( gulp.dest(DIST.IMG) );
 });
@@ -105,10 +108,17 @@ gulp.task('javascript', function() {
 
 /* Produce scripts.min.js */
 gulp.task('uglify', ['javascript'], function() {
-	return gulp.src(DIST.JS_PATH +'/*.js')
+	return gulp.src([DIST.JS_PATH +'/*.js', '!'+ DIST.JS_PATH +'/*.min.js'])
 		.pipe( gp.uglify(UGLIFY_OPTS) )
 		.pipe( gp.rename({extname: '.min.js'}) )
 		.pipe( gulp.dest(DIST.JS_PATH) )
+});
+
+/* Copy over static files */
+gulp.task('static', function() {
+	return gulp.src(SRC.STATIC +'/**')
+		.pipe( gp.cached('static', {optimizeMemory: true}) )
+		.pipe( gulp.dest(DIST.STATIC_PATH) )
 });
 
 /* Remove everything in dist/ */
@@ -124,9 +134,10 @@ gulp.task('default', ['html', 'css', 'javascript']);
 gulp.task('watch', function() {
 	gulp.watch(SRC.HTML +'/**', ['html']);
 	gulp.watch(SRC.CSS +'/**', ['css']);
-	gulp.watch(SRC.JS +'/**', ['javascript']);
+	gulp.watch(SRC.JS +'/**', ['uglify']);
 	gulp.watch(SRC.IMG +'/**', ['images']);
+	gulp.watch(SRC.STATIC +'/**', ['static']);
 });
 
 /* Clean dist/, optimize images & run default task */
-gulp.task('dist', ['clean', 'images', 'default', 'uglify']);
+gulp.task('dist', ['clean', 'images', 'static', 'default', 'uglify']);

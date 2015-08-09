@@ -12,6 +12,7 @@
 		"gulp-load-plugins": "*",
 		"gulp-rename": "1.2.x",
 		"gulp-cached": "1.1.x",
+		"gulp-preprocess": "1.2.x",
 		"gulp-htmlmin": "1.1.x",
 		"gulp-imagemin": "2.3.x",
 		"imagemin-mozjpeg": "5.1.x",
