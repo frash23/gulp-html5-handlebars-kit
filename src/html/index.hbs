@@ -1,0 +1,31 @@
+<p>
+	<b>Boilerplate? Wasn't gulp meant to be as easy to use as possible?</b><br>
+	At this point, I have no idea. Gulp is certainly a powerful, flexible &amp; dynamic
+	way to construct your pipeline, but it's <i>not</i> a small thing to set up, so I made this.<br>
+	<br>
+	Features include:
+	<ul>
+		<li>Transpiles EcmaScript 2015 to EcmaScript 5 compliant JavaScript using <a href="https://babeljs.io">Babel</a>
+		<li><a href="http://sass-lang.com/">SASS</a> pre-processing
+		<li>Bundling all javascript into one script
+		<li>Minification &amp; optimization of:
+		<li>
+			<ul>
+				<li>JavaScript
+				<li>CSS (structural optimization via <a href="https://github.com/css/csso">CSSO</a>)
+				<li>HTML
+				<li>jpeg images
+				<li>png images
+				<li>GIF images
+				<li>Animated GIF images
+				<li>SVG vectors
+			</ul>
+		<li>Preserves special comments such as <code>&lt;!--!  --&gt;</code> and <code>/*!  */</code>
+		<li>Clean, documented gulpfile.js
+		<li>Tries to be lightweight on depedencies (it's not easy)
+		<li>`dist/` folder should be ready for deployment after a run of `gulp dist`
+	</ul>
+	The pipeline's structure is optimized for single-page applications. You should be
+	loading any page data dynamically. This also makes migrating to a more complex
+	application using a template engine such as <a href="http://handlebarsjs.com/">handlebars</a>.
+</p>

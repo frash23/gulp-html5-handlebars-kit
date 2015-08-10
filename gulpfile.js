@@ -40,6 +40,7 @@ const UGLIFY_OPTS = {
 
 const DIST_PATH = './dist/';
 const SRC_PATH = './src/';
+const STATIC_PATH = DIST_PATH +'/static/';
 const SRC = {
 	'IMG': SRC_PATH +'/images',
 	'HTML': SRC_PATH +'/html',
@@ -48,12 +49,12 @@ const SRC = {
 	'STATIC': SRC_PATH +'/static'
 };
 const DIST = {
-	'IMG': DIST_PATH +'/images',
+	'IMG': STATIC_PATH +'/images',
 	'HTML': DIST_PATH,
-	'CSS_PATH': DIST_PATH,
+	'CSS_PATH': STATIC_PATH,
 	'CSS_NAME': '/style.css',
-	'JS_PATH': DIST_PATH +'/js',
-	'STATIC_PATH': DIST_PATH +'/static'
+	'JS_PATH': STATIC_PATH +'/js',
+	'STATIC_PATH': STATIC_PATH
 };
 
 // Load dependencies & plugins
@@ -75,7 +76,6 @@ var mkdir = function(path) {
 gulp.task('html', function() {
 	return gulp.src([SRC.HTML +'/**', '!'+ SRC.HTML +'/**/*.inc*'])
 		.pipe( gp.cached('html') )
-		.pipe( gp.preprocess() )
 		.pipe( gp.htmlmin(HTMLMIN_OPTS) )
 		.pipe( gulp.dest(DIST.HTML) );
 });
