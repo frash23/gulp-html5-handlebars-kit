@@ -8,12 +8,24 @@ var gp = require('gulp-load-plugins')({
 	lazy: true
 });
 
-const IMAGEMIN_OPTS = {
+var IMAGEMIN_SLOW = true;
+
+const IMAGEMIN_FAST_OPTS = {
+	optimizationLevel: 2,
+	interlaced: true,
+	multipass: true,
+	use:[
+		gp.mozjpeg({quality: 70, dcScanOpt: 2, smooth: 15}),
+		gp.pngquant({quality: 45-60, speed: 9})
+	]
+};
+const IMAGEMIN_SLOW_OPTS = {
 	optimizationLevel: 6,
 	interlaced: true,
 	multipass: true,
 	use:[
-		gp.mozjpeg({quality: 65, dcScanOpt: 2, smooth: 15})
+		gp.mozjpeg({quality: 70, dcScanOpt: 2, smooth: 15}),
+		gp.pngquant({quality: 45-60, speed: 1})
 	]
 };
 
@@ -38,8 +50,8 @@ const UGLIFY_OPTS = {
 	preserveComments: 'some'
 };
 
-const DIST_PATH = './dist/';
-const SRC_PATH = './src/';
+const DIST_PATH = 'dist/';
+const SRC_PATH = 'src/';
 const STATIC_PATH = DIST_PATH +'/static/';
 const SRC = {
 	'IMG': SRC_PATH +'/images',
@@ -84,7 +96,7 @@ gulp.task('html', function() {
 gulp.task('images', function() {
 	return gulp.src(SRC.IMG +'/**')
 		.pipe( gp.cached('images', {optimizeMemory: true}) )
-		.pipe( gp.imagemin(IMAGEMIN_OPTS) )
+		.pipe( gp.imagemin( IMAGEMIN_SLOW? IMAGEMIN_SLOW_OPTS : IMAGEMIN_FAST_OPTS ) )
 		.pipe( gulp.dest(DIST.IMG) );
 });
 
@@ -103,15 +115,10 @@ gulp.task('css', function() {
 gulp.task('javascript', function() {
 	return gulp.src(SRC.JS +'/*.js')
 		.pipe( gp.webpack(WEBPACK_OPTS) )
-		.pipe( gulp.dest(DIST.JS_PATH) );
-});
-
-/* Produce scripts.min.js */
-gulp.task('uglify', ['javascript'], function() {
-	return gulp.src([DIST.JS_PATH +'/*.js', '!'+ DIST.JS_PATH +'/*.min.js'])
+		.pipe( gulp.dest(DIST.JS_PATH) )
 		.pipe( gp.uglify(UGLIFY_OPTS) )
 		.pipe( gp.rename({extname: '.min.js'}) )
-		.pipe( gulp.dest(DIST.JS_PATH) )
+		.pipe( gulp.dest(DIST.JS_PATH) );
 });
 
 /* Copy over static files */
@@ -127,6 +134,11 @@ gulp.task('clean', function() {
 	mkdir(DIST_PATH);
 });
 
+/* Make imagemin spend extra time compressing to get better quality */
+gulp.task('slowimgs', function() {
+	IMAGEMIN_SLOW = true;
+});
+
 /* Default task. Does not optimize images due to the large overhead it
  * comes with, run `images` manually or use watch/dist */
 gulp.task('default', ['html', 'css', 'javascript']);
@@ -134,10 +146,10 @@ gulp.task('default', ['html', 'css', 'javascript']);
 gulp.task('watch', function() {
 	gulp.watch(SRC.HTML +'/**', ['html']);
 	gulp.watch(SRC.CSS +'/**', ['css']);
-	gulp.watch(SRC.JS +'/**', ['uglify']);
+	gulp.watch(SRC.JS +'/**', ['javascript']);
 	gulp.watch(SRC.IMG +'/**', ['images']);
 	gulp.watch(SRC.STATIC +'/**', ['static']);
 });
 
 /* Clean dist/, optimize images & run default task */
-gulp.task('dist', ['clean', 'images', 'static', 'default', 'uglify']);
+gulp.task('dist', ['slowimgs', 'clean', 'images', 'static', 'default']);

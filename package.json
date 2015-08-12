@@ -26,6 +26,7 @@
 		"gulp-htmlmin": "1.1.x",
 		"gulp-imagemin": "2.3.x",
 		"imagemin-mozjpeg": "5.1.x",
+		"imagemin-pngquant": "4.1.x",
 		"gulp-sass": "2.0.x",
 		"gulp-csso": "1.0.x",
 		"gulp-myth": "1.0.x",
