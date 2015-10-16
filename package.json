@@ -36,5 +36,5 @@
 		"gulp-uglify": "1.2.x"
 	},
 
-	"engine": "node >= 0.12.x"
+	"engine": "node >= 4.0.0"
 }

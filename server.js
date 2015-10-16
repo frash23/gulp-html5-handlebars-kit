@@ -16,13 +16,6 @@ app.engine('hbs', exphbs({
 }));
 app.set('view engine', 'hbs');
 
-function send(res, err, html) {
-	if(err) {
-		res.send(err +'hi');
-	} else {
-		res.send(html);
-	}
-}
 
 
 app.use('/static', express.static(ROOT +'static'));
@@ -32,8 +25,8 @@ app.get('/', function(req, res) { res.render('index'); });
 app.get('/:page', function (req, res) {
 	var file = req.params.page || 'index';
 	fs.exists(ROOT + file + HBS_EXT, function(exists, err) {
-		if(exists) res.render(file, {}, function(err, html) { send(res, err, html); });
-		else res.render('error', {error: 'Unable to find '+file, code: 404}, send);
+		if(exists) res.render(file, {}, (err, html)=> res.send(err? err : html));
+		else res.render('error', {error: 'Unable to find '+file, code: 404}, (err, html)=> res.send(err? err : html));
 	});
 
 	var data = {
