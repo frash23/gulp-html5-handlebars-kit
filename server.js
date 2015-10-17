@@ -31,12 +31,20 @@ app.get('/page/:page', function(req, res) {
 	var page = req.params.page || 'index';
 
 	fs.exists(ROOT + page + HBS_EXT, exists=> {
-		if(exists) res.render(page);
-		else res.status(404).render('error', {error: `Couldn't find page "${page}"`, code: 404});
+		if(exists) res.render(page, { title: capitalize(page) });
+		else res.status(404).render('error', { error: `Couldn't find page "${page}"`, code: 404, title: "404" });
 	});
 });
 
 /* Handle paths not routed.
  * This will activate on *all* unrouted requests, even non-GET requests (POST etc.)
  * This route must always be the last specified */
-app.use((req, res)=> res.status(404).render('error', {error: 'Page not found', code: 404}));
+app.use((req, res)=> res.status(404).render('error', { error: 'Page not found', code: 404 }));
+
+
+
+/* A function used for capitalizing the first letter
+ * in a string, used when setting the title of a page */
+function capitalize(str) {
+	return str.charAt(0).toUpperCase() + str.substr(1);
+}

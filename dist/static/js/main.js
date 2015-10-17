@@ -44,47 +44,31 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* Sample main.js. Imports a module and exports it to the window
-	 * object so you can call properties from it in your console for
-	 * testing */
+	/* Demonstration of the EcmaScript 2015 module syntax */
+	"use strict";
 
-	'use strict';
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
 
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _nq = __webpack_require__(1);
-
-	var _nq2 = _interopRequireDefault(_nq);
-
-	var _Module = __webpack_require__(2);
+	var _Module = __webpack_require__(1);
 
 	var mod = _interopRequireWildcard(_Module);
 
-	window.$ = _nq2['default'];
-	window.mod = mod;
+	(function () {
+		"use strict";
+
+		/* Export the above module to the global scope */
+		window.mod = mod;
+
+		/* The only true jQuery replacement */
+		window.$ = function (sel) {
+			return [].slice.call(document.querySelectorAll(sel));
+		};
+
+		/* Apply a map as `this` so we don't accidentally pollute the global namespace */
+	}).call({});
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
-
-	/* nq - the only true jQuery replacement */
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports["default"] = function (sel) {
-	  return [].slice.call(document.querySelectorAll(sel));
-	};
-
-	module.exports = exports["default"];
-
-/***/ },
-/* 2 */
 /***/ function(module, exports) {
 
 	/* Example module to demonstrate the import functionality */

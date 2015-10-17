@@ -1,9 +1,14 @@
-/* Sample main.js. Imports a module and exports it to the window
- * object so you can call properties from it in your console for
- * testing */
-
-import $ from './nq';
+/* Demonstration of the EcmaScript 2015 module syntax */
 import * as mod from './Module';
 
-window.$ = $;
-window.mod = mod;
+(function() {
+	"use strict";
+
+	/* Export the above module to the global scope */
+	window.mod = mod;
+
+	/* The only true jQuery replacement */
+	window.$ = sel=> [].slice.call( document.querySelectorAll(sel) );
+
+/* Apply a map as `this` so we don't accidentally pollute the global namespace */
+}.call({}));
