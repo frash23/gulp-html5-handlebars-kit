@@ -14,10 +14,11 @@
 
 	<body>
 		<div class="container">
-			<!-- @include header.inc.html -->
+			<!-- ">" means we are loading a partial (from partials/) -->
 			{{> header }}
 			
-			{{{body}}}
+			<!-- Triple-brackets means `body` won't be escaped -->
+			{{{ body }}}
 
 		</div>
 
