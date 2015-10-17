@@ -6,6 +6,7 @@ var exphbs  = require('express-handlebars');
 var fs		= require('fs');
 
 var app = express();
+app.listen(3000);
 app.set('views', ROOT);
 
 app.engine('hbs', exphbs({
@@ -18,36 +19,24 @@ app.set('view engine', 'hbs');
 
 
 
+/* You should probably be proxying this server through nginx,
+ * which you might as well serve static content from. */
 app.use('/static', express.static(ROOT +'static'));
 
-app.get('/', function(req, res) { res.render('index'); });
+/* Route for index/home/default path */
+app.get(['/', '/home', 'index'], (req, res)=> res.render('index'));
 
-app.get('/:page', function (req, res) {
-	var file = req.params.page || 'index';
-	fs.exists(ROOT + file + HBS_EXT, function(exists, err) {
-		if(exists) res.render(file, {}, (err, html)=> res.send(err? err : html));
-		else res.render('error', {error: 'Unable to find '+file, code: 404}, (err, html)=> res.send(err? err : html));
+/* Handle all paths under `page/`, dynamically load whatever comes after the slash */
+app.get('/page/:page', function(req, res) {
+	var page = req.params.page || 'index';
+
+	fs.exists(ROOT + page + HBS_EXT, exists=> {
+		if(exists) res.render(page);
+		else res.status(404).render('error', {error: `Couldn't find page "${page}"`, code: 404});
 	});
-
-	var data = {
-		thing: file
-	}
-
-		/*if(/*hasPerms*//*false) err = new Error('Unauthorized');
-
-		if(err) {
-			var msg = err.message;
-			if( msg.match(/Failed to lookup view/) || msg.match(/Cannot find/) ) code = 404;
-			else if( msg.match(/EACCES, open/) ) code = 403;
-			else if( msg.match(/Unauthorized/) ) code = 401;
-			else code = 500;
-
-			res.render('error', {error: msg, code: code});
-			return;
-		}
-
-		res.send(html);
-	});*/
 });
 
-app.listen(3000);
+/* Handle paths not routed.
+ * This will activate on *all* unrouted requests, even non-GET requests (POST etc.)
+ * This route must always be the last specified */
+app.use((req, res)=> res.status(404).render('error', {error: 'Page not found', code: 404}));

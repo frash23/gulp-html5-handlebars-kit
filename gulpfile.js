@@ -47,7 +47,7 @@ const WEBPACK_OPTS = {
 };
 
 const UGLIFY_OPTS = {
-	preserveComments: 'some'
+	preserveComments: 'license'
 };
 
 const DIST_PATH = 'dist/';
