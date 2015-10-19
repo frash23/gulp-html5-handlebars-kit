@@ -102,9 +102,8 @@ gulp.task('images', function() {
 
 /* Bundle, vendor prefix & optimize CSS */
 gulp.task('css', function() {
-	return gulp.src(SRC.CSS +'/main.scss')
-		.pipe( gp.cached('css') )
-		.pipe( gp.sass() )
+	gulp.src(SRC.CSS +'/main.scss')
+		.pipe( gp.sass() ).on( 'error', e=> console.log('Unable to process CSS: ', e.name, e.message) )
 		.pipe( gp.myth() )
 		.pipe( gp.csso() )
 		.pipe( gp.rename(DIST.CSS_NAME) )
