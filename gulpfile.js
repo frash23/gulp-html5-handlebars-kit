@@ -41,7 +41,10 @@ const WEBPACK_OPTS = {
 	target:'web',
 	output: { filename: '[name].js' },
 	module: {
-		loaders: [ { loader: 'babel-loader?compact=false' } ],
+		loaders: [ {
+			loader: 'babel-loader',
+			query: { presets: ['es2015'] }
+		} ],
 		cache: true
 	}
 };
