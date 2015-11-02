@@ -8,7 +8,7 @@ var gp = require('gulp-load-plugins')({
 	lazy: true
 });
 
-var IMAGEMIN_SLOW = true;
+var IMAGEMIN_SLOW = false ; /* Set to true if you want to speed up image compression */
 
 const IMAGEMIN_FAST_OPTS = {
 	optimizationLevel: 2,
@@ -143,11 +143,11 @@ gulp.task('slowimgs', function() {
 gulp.task('default', ['html', 'css', 'javascript']);
 
 gulp.task('watch', function() {
-	gulp.watch(SRC.HTML +'/**', ['html']);
-	gulp.watch(SRC.CSS +'/**', ['css']);
-	gulp.watch(SRC.JS +'/**', ['javascript']);
-	gulp.watch(SRC.IMG +'/**', ['images']);
-	gulp.watch(SRC.STATIC +'/**', ['static']);
+	gulp.watch(SRC.HTML +'/**', { debounceDelay: 2000 }, ['html']);
+	gulp.watch(SRC.CSS +'/**', { debounceDelay: 2000 } ['css']);
+	gulp.watch(SRC.JS +'/**', { debounceDelay: 2000 } ['javascript']);
+	gulp.watch(SRC.IMG +'/**', { debounceDelay: 2000 } ['images']);
+	gulp.watch(SRC.STATIC +'/**', { debounceDelay: 2000 } ['static']);
 });
 
 /* Clean dist/, optimize images & run default task */
