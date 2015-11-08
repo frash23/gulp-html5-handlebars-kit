@@ -149,10 +149,10 @@ gulp.task('default', ['html', 'css', 'javascript']);
 
 gulp.task('watch', function() {
 	gulp.watch(SRC.HTML +'/**', { debounceDelay: 2000 }, ['html']);
-	gulp.watch(SRC.CSS +'/**', { debounceDelay: 2000 } ['css']);
-	gulp.watch(SRC.JS +'/**', { debounceDelay: 2000 } ['javascript']);
-	gulp.watch(SRC.IMG +'/**', { debounceDelay: 2000 } ['images']);
-	gulp.watch(SRC.STATIC +'/**', { debounceDelay: 2000 } ['static']);
+	gulp.watch(SRC.CSS +'/**', { debounceDelay: 2000 }, ['css']);
+	gulp.watch(SRC.JS +'/**', { debounceDelay: 2000 }, ['javascript']);
+	gulp.watch(SRC.IMG +'/**', { debounceDelay: 2000 }, ['images']);
+	gulp.watch(SRC.STATIC +'/**', { debounceDelay: 2000 }, ['static']);
 });
 
 /* Clean dist/, optimize images & run default task */
