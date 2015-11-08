@@ -68,7 +68,8 @@ const DIST = {
 	'HTML': DIST_PATH,
 	'CSS_PATH': STATIC_PATH,
 	'CSS_NAME': '/style.css',
-	'JS_PATH': STATIC_PATH +'/js',
+	'JS_PATH': STATIC_PATH,
+	'JS_NAME': 'scripts.js',
 	'STATIC_PATH': STATIC_PATH
 };
 
@@ -117,6 +118,7 @@ gulp.task('css', function() {
 gulp.task('javascript', function() {
 	return gulp.src(SRC.JS +'/*.js')
 		.pipe( gp.webpack(WEBPACK_OPTS) )
+		.pipe( gp.rename({ basename: DIST.JS_NAME, extname: '' }) )
 		.pipe( gulp.dest(DIST.JS_PATH) )
 		.pipe( gp.uglify(UGLIFY_OPTS) )
 		.pipe( gp.rename({extname: '.min.js'}) )
