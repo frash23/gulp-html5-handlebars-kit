@@ -21,21 +21,21 @@
 	"devDependencies": {
 		"gulp": "3.9.x",
 		"rimraf": "2.4.x",
-		"gulp-load-plugins": "1.0.*",
+		"gulp-load-plugins": "1.1.x",
 		"gulp-rename": "1.2.x",
 		"gulp-cached": "1.1.x",
 		"gulp-htmlmin": "1.2.x",
-		"gulp-imagemin": "2.3.x",
+		"gulp-imagemin": "2.4.x",
 		"imagemin-mozjpeg": "5.1.x",
 		"imagemin-pngquant": "4.2.x",
-		"gulp-sass": "2.0.x",
+		"gulp-sass": "2.1.x",
 		"gulp-csso": "1.0.x",
-		"gulp-myth": "1.0.x",
-		"gulp-webpack": "1.5.x",
-		"babel-core": "6.0.x",
-		"babel-loader": "6.0.x",
-		"babel-preset-es2015": "6.0.x",
-		"gulp-uglify": "1.4.x"
+		"gulp-myth": "1.1.x",
+		"webpack-stream": "2.1.x",
+		"babel-core": "6.1.x",
+		"babel-loader": "6.2.x",
+		"babel-preset-es2015": "6.1.x",
+		"gulp-uglify": "1.5.x"
 	},
 
 	"engine": "node >= 4.0.0"
