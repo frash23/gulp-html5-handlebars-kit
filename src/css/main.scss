@@ -1,8 +1,8 @@
 @import 'normalize.css';
 
-$font-stack:	"Lucida Grande", "Verdana",
-					"Helvetica Neue", "Helvetica",
-					Tahoma, Sans-Serif;
+$font-stack:	Verdana, Tahoma, Arial,
+					"Lucida Grande", "Helvetica Neue", ,
+					Helvetica, Sans-Serif;
 
 html, body {
 	font-family: $font-stack;
