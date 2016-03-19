@@ -52,8 +52,7 @@ const WEBPACK_OPTS = {
 };
 
 const UGLIFY_OPTS = {
-	preserveComments: 'some',
-	screwIE8: true
+	preserveComments: 'license'
 };
 
 const DIST_PATH = 'dist/';
