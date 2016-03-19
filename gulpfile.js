@@ -45,7 +45,7 @@ const WEBPACK_OPTS = {
 	module: {
 		loaders: [ {
 			loader: 'babel-loader',
-			query: { presets: ['es2015'] }
+			query: { presets: ['stage-3'] }
 		} ],
 		cache: true
 	}
