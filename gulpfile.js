@@ -116,8 +116,8 @@ gulp.task('images', function() {
 /* Bundle, vendor prefix & optimize CSS */
 gulp.task('css', function() {
 	gulp.src(SRC.CSS +'/main.scss')
-		.pipe( gp.sass() )
 		.on( 'error', e=> console.log('Unable to process CSS: ', e.name, e.message) )
+		.pipe( gp.sass() )
 		.pipe( gp.myth() )
 		.pipe( gp.csso() )
 		.pipe( gp.rename(DIST.CSS_NAME) )
@@ -126,8 +126,8 @@ gulp.task('css', function() {
 
 /* Bundle src/js and transpile it to ES5 */
 gulp.task('javascript', function() {
-	return gulp.src(SRC.JS +'/Main.js')
-		.pipe( gp.webpack(WEBPACK_OPTS) )
+	var pipe = gulp.src(SRC.JS +'/Main.js');
+		.pipe( gp.webpack(WEBPACK_OPTS).on('error', function() { pipe.end(); }) )
 		.pipe( gp.rename({ basename: DIST.JS_NAME, extname: '' }) )
 		.pipe( gulp.dest(DIST.JS_PATH) )
 		.pipe( gp.uglify(UGLIFY_OPTS) )
