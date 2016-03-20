@@ -131,8 +131,8 @@ gulp.task('javascript', function() {
 		.pipe( gp.rename({ basename: DIST.JS_NAME, extname: '' }) )
 		.pipe( gulp.dest(DIST.JS_PATH) )
 		.pipe( gp.uglify(UGLIFY_OPTS) )
-		//.pipe( gp.rename({ extname: '.min.js' }) )
-		//.pipe( gulp.dest(DIST.JS_PATH) );
+		.pipe( gp.rename({ extname: '.min.js' }) )
+		.pipe( gulp.dest(DIST.JS_PATH) );
 });
 
 /* Copy over static files */
