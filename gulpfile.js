@@ -82,8 +82,7 @@ const WEBPACK_OPTS = {
 			loader: 'babel-loader',
 			query: {
 				cacheDirectory: true,
-				presets: ['es2015', 'stage-3'],
-				plugins: ['transform-runtime']
+				presets: ['es2015'],
 			}
 		} ],
 		cache: true
@@ -92,7 +91,7 @@ const WEBPACK_OPTS = {
 
 /* Javascript minification options */
 const UGLIFY_OPTS = {
-	preserveComments: 'license'
+	// preserveComments: 'license'
 };
 
 /* Gulp tasks */
@@ -127,6 +126,7 @@ gulp.task('css', function() {
 /* Bundle src/js and transpile it to ES5 */
 gulp.task('javascript', function() {
 	var pipe = gulp.src(SRC.JS +'/Main.js');
+	pipe.on( 'error', e=> console.log('Unable to process CSS: ', e.name, e.message) )
 		.pipe( gp.webpack(WEBPACK_OPTS).on('error', function() { pipe.end(); }) )
 		.pipe( gp.rename({ basename: DIST.JS_NAME, extname: '' }) )
 		.pipe( gulp.dest(DIST.JS_PATH) )

@@ -7,9 +7,8 @@
 	"license": "UNLICENSED",
 
 	"scripts": {
-		"server": "babel-node server",
-		"build": "gulp dist",
-		"watch": "gulp"
+		"start": "babel-node server",
+		"build": "gulp dist"
 	},
 	
 	"dependencies": {
