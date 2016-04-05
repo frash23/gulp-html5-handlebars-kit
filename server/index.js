@@ -1,7 +1,8 @@
 #!/usr/bin/env babel-node
-"use strict";
+'use strict';
 
 const ROOT = 'dist/';
+const CFG = require('../config.json');
 const HBS_EXT = '.hbs';
 
 const express		= require('express');
@@ -10,7 +11,7 @@ const fs			= require('fs');
 const hbsHelpers	= require('./hbs-helpers');
 
 const app = express();
-app.listen(3000);
+app.listen(CFG.listen.port, CFG.listen.host);
 app.set('views', ROOT);
 app.disable('x-powered-by');
 //app.set('trust proxy', true);
@@ -48,6 +49,8 @@ app.get('/page/:page', function(req, res) {
  * This will activate on *all* unrouted requests, even non-GET requests (POST etc.)
  * This route must always be the last specified */
 app.use( (req, res)=> res.status(404).render('error', { error: 'Page not found', code: 404 }) );
+
+console.log(`Server listening on ${CFG.listen.host}:${CFG.listen.port}`);
 
 
 
