@@ -2,6 +2,7 @@ node_modules/
 *.sw?
 *~
 .dsyncignore
+npm-debug.log
 
 # We don't want anything in dist/, but we do want the folder
 dist/*

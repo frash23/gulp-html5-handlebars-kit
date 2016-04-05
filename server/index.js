@@ -1,17 +1,25 @@
+#!/usr/bin/env babel-node
+"use strict";
+
 const ROOT = 'dist/';
 const HBS_EXT = '.hbs';
 
-var express = require('express');
-var exphbs  = require('express-handlebars');
-var fs		= require('fs');
+const express		= require('express');
+const exphbs		= require('express-handlebars');
+const fs			= require('fs');
+const hbsHelpers	= require('./hbs-helpers');
 
-var app = express();
+const app = express();
 app.listen(3000);
 app.set('views', ROOT);
+app.disable('x-powered-by');
+//app.set('trust proxy', true);
+//app.enable('trust proxy');
 
 app.engine('hbs', exphbs({
 	layoutsDir: ROOT +'layouts/',
 	partialsDir: ROOT +'partials/',
+	helpers: hbsHelpers(app),
 	extname: 'hbs',
 	defaultLayout: 'main.hbs'
 }));
@@ -30,8 +38,8 @@ app.get(['/', '/home', 'index'], (req, res)=> res.render('index'));
 app.get('/page/:page', function(req, res) {
 	var page = req.params.page || 'index';
 
-	fs.exists(ROOT + page + HBS_EXT, exists=> {
-		if(exists) res.render(page, { title: capitalize(page) });
+	fs.exists(ROOT + 'pages/' + page + HBS_EXT, exists=> {
+		if(exists) res.render('pages/' + page, { title: capitalize(page) });
 		else res.status(404).render('error', { error: `Couldn't find page "${page}"`, code: 404, title: "404" });
 	});
 });
@@ -39,7 +47,7 @@ app.get('/page/:page', function(req, res) {
 /* Handle paths not routed.
  * This will activate on *all* unrouted requests, even non-GET requests (POST etc.)
  * This route must always be the last specified */
-app.use((req, res)=> res.status(404).render('error', { error: 'Page not found', code: 404 }));
+app.use( (req, res)=> res.status(404).render('error', { error: 'Page not found', code: 404 }) );
 
 
 

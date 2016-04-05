@@ -94,6 +94,14 @@ const UGLIFY_OPTS = {
 	// preserveComments: 'license'
 };
 
+/* Gulp watch options
+ * These are mostly here to prevent executing while files are saving, running while a previous watch
+ * task is already executing etc */
+const WATCH_OPTS = {
+	debounceDelay: 2000,
+	delay: 69000
+};
+
 /* Gulp tasks */
 
 /* Minify HTML */
