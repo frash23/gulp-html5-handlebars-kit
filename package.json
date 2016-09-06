@@ -7,7 +7,7 @@
 	"license": "UNLICENSED",
 
 	"scripts": {
-		"start": "node server",
+		"server": "node server",
 		"watch": "gulp watch",
 		"build": "gulp dist"
 	},
