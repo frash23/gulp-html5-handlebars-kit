@@ -1,64 +1,58 @@
-"use strict";
+'use strict';
 
-/* Import modules */
-var fs = require('fs');
-var rimraf = require('rimraf');
-var gulp = require('gulp');
-var gulpLoadPlugins = require('gulp-load-plugins');
+const fs          = require('fs');
+const rimraf      = require('rimraf');
+const gulp        = require('gulp');
+const gutil       = require('gulp-util');
+const loadPlugins = require('gulp-load-plugins');
 
-/* Function for creating a folder */
-var mkdir = function(path) {
-	try { fs.mkdirSync(path); }
-	catch(e) { if(e.code !== 'EEXIST') throw e; }
-};
-
-/* Load gulp plugins dynamically and automatically */
-var gp = gulpLoadPlugins({
-	pattern: ['gulp-*', 'imagemin-*', 'webpack-*'],
+const gp = loadPlugins({
+	pattern      : ['gulp-*', 'imagemin-*', 'webpack-*'],
 	replaceString: /^gulp-|^imagemin-|-stream$/,
-	camelize: true,
-	lazy: true
+	camelize     : true,
+	lazy         : true
 });
 
-/* Constant values */
-const WATCH_IGNORE = ['!**/~*', '!**/.*̈́', '!**/*.swp'];
-const IMAGEMIN_SLOW = true ; // Set this to false to speed up image compression at the cost of quality
+/* Returns true if environment variable `NODE_DEV` is set.
+ * Image compression speed is increased at the cost of quality */
+const DEV = process.env.hasOwnProperty('NODE_DEV');
 
-/* Paths for getting source and putting built code */
-const DIST_PATH = 'dist/';
-const SRC_PATH = 'src/';
+const DIST_PATH   = 'dist/';
+const SRC_PATH    = 'src/';
 const STATIC_PATH = DIST_PATH +'/static/';
 
-/* Locations of various source assets */
+const WATCH_PATHS = [ 
+	/* We don't want the watch event to fire
+	 * on temporary files created by editors */
+	'!' + SRC_PATH + '/**/*~',
+	'!' + SRC_PATH + '/**/~*',
+	'!' + SRC_PATH + '/**/.*̈́'
+];
+
 const SRC = {
-	'IMG': SRC_PATH +'/images',
-	'HTML': SRC_PATH +'/html',
-	'CSS': SRC_PATH +'/css',
-	'JS': SRC_PATH +'/js',
-	'STATIC': SRC_PATH +'/static'
+	'IMG'   : SRC_PATH + '/images',
+	'HTML'  : SRC_PATH + '/html',
+	'CSS'   : SRC_PATH + '/css',
+	'JS'    : SRC_PATH + '/js',
+	'STATIC': SRC_PATH + '/static'
 };
 
-/* Locations of built assets */
 const DIST = {
-	'IMG': STATIC_PATH +'/images',
-	'HTML': DIST_PATH,
-	'CSS_PATH': STATIC_PATH,
-	'CSS_NAME': '/style.css',
-	'JS_PATH': STATIC_PATH,
-	'JS_NAME': 'scripts.js',
+	'IMG'        : STATIC_PATH +'/images',
+	'HTML'       : DIST_PATH,
+	'CSS_PATH'   : STATIC_PATH,
+	'CSS_NAME'   : '/style.css',
+	'JS_PATH'    : STATIC_PATH,
+	'JS_NAME'    : 'scripts.js',
 	'STATIC_PATH': STATIC_PATH,
 };
 
-/* Image compression options */
-const IMAGEMIN_OPTS = {
-	optimizationLevel: IMAGEMIN_SLOW? 6 : 2,
-	interlaced: true,
-	multipass: true,
-	use:[
-		gp.mozjpeg({ quality: 75, dcScanOpt: 2, smooth: 15 }),
-		gp.pngquant({ quality: 50-65, speed: IMAGEMIN_SLOW? 1 : 9 })
-	]
-};
+const IMAGEMIN_PLUGINS = [
+	gp.mozjpeg( { quality: 75, dcScanOpt: 2, smooth: 15 }),
+	gp.pngquant({ quality: 50-65, speed: DEV? 10 : 1 }),
+	gp.gifsicle({ interlaced: true, optimizationLevel: DEV? 1 : 3 }),
+	gp.svgo()
+];
 
 /* HTML minifcation options */
 const HTMLMIN_OPTS = {
@@ -69,7 +63,12 @@ const HTMLMIN_OPTS = {
 	minifyURLs: true
 };
 
-/* Webpack options */
+const BABEL_OPTS = {
+	cacheDirectory: true,
+	presets: ['es2015'],
+	plugins: [ [ "transform-runtime", { polyfill: false }] ]
+}
+
 const WEBPACK_OPTS = {
 	target:'web',
 	output: {
@@ -79,32 +78,22 @@ const WEBPACK_OPTS = {
 	},
 	module: {
 		loaders: [ {
-			loader: 'babel-loader',
-			query: {
-				cacheDirectory: true,
-				presets: ['es2015'],
-			}
+			loader: 'babel',
+			query: BABEL_OPTS
 		} ],
 		cache: true
 	}
 };
 
-/* Javascript minification options */
 const UGLIFY_OPTS = {
-	// preserveComments: 'license'
 };
 
-/* Gulp watch options
- * These are mostly here to prevent executing while files are saving, running while a previous watch
- * task is already executing etc */
-const WATCH_OPTS = {
-	debounceDelay: 2000,
-	delay: 69000
-};
+/* Gracefully (sort of) create a folder */
+function mkdir(path) {
+	try { fs.mkdirSync(path); }
+	catch(e) { if(e.code !== 'EEXIST') throw e; }
+}
 
-/* Gulp tasks */
-
-/* Minify HTML */
 gulp.task('html', function() {
 	return gulp.src([SRC.HTML +'/**', '!'+ SRC.HTML +'/**/*.inc*'])
 		.pipe( gp.cached('html') )
@@ -112,30 +101,25 @@ gulp.task('html', function() {
 		.pipe( gulp.dest(DIST.HTML) );
 });
 
-/* Optimize images */
 gulp.task('images', function() {
 	return gulp.src(SRC.IMG +'/**')
 		.pipe( gp.cached('images', { optimizeMemory: true }) )
-		.pipe( gp.imagemin(IMAGEMIN_OPTS) )
+		.pipe( gp.imagemin(IMAGEMIN_PLUGINS) )
 		.pipe( gulp.dest(DIST.IMG) );
 });
 
-/* Bundle, vendor prefix & optimize CSS */
 gulp.task('css', function() {
 	gulp.src(SRC.CSS +'/main.scss')
-		.on( 'error', e=> console.log('Unable to process CSS: ', e.name, e.message) )
-		.pipe( gp.sass() )
+		.pipe( gp.sass() ).on('error', gp.sass.logError)
 		.pipe( gp.myth() )
 		.pipe( gp.csso() )
 		.pipe( gp.rename(DIST.CSS_NAME) )
 		.pipe( gulp.dest(DIST.CSS_PATH) );
 });
 
-/* Bundle src/js and transpile it to ES5 */
 gulp.task('javascript', function() {
-	var pipe = gulp.src(SRC.JS +'/Main.js');
-	pipe.on( 'error', e=> console.log('Unable to process CSS: ', e.name, e.message) )
-		.pipe( gp.webpack(WEBPACK_OPTS).on('error', function() { pipe.end(); }) )
+	gulp.src(SRC.JS +'/Main.js')
+		.pipe( gp.webpack(WEBPACK_OPTS) ).on( 'error', e=> this.emit('end') )
 		.pipe( gp.rename({ basename: DIST.JS_NAME, extname: '' }) )
 		.pipe( gulp.dest(DIST.JS_PATH) )
 		.pipe( gp.uglify(UGLIFY_OPTS) )
@@ -143,25 +127,23 @@ gulp.task('javascript', function() {
 		.pipe( gulp.dest(DIST.JS_PATH) );
 });
 
-/* Copy over static files */
 gulp.task('static', function() {
 	return gulp.src(SRC.STATIC +'/**')
 		.pipe( gp.cached('static', { optimizeMemory: true }) )
-		.pipe( gulp.dest(DIST.STATIC_PATH) )
+		.pipe( gulp.dest(DIST.STATIC_PATH) );
 });
 
-/* Remove everything in dist/ */
 gulp.task('clean', function() {
 	rimraf.sync(DIST_PATH);
 	mkdir(DIST_PATH);
 });
 
 gulp.task('watch', function() {
-	gulp.watch([SRC.HTML +'/**', ...WATCH_IGNORE], ['html']);
-	gulp.watch([SRC.CSS +'/**', ...WATCH_IGNORE], ['css']);
-	gulp.watch([SRC.JS +'/**', ...WATCH_IGNORE], ['javascript']);
-	gulp.watch([SRC.IMG +'/**', ...WATCH_IGNORE], ['images']);
-	gulp.watch([SRC.STATIC +'/**', ...WATCH_IGNORE], ['static']);
+	gulp.watch( WATCH_PATHS.concat(SRC.JS + '/**'), ['javascript'] );
+	gulp.watch( WATCH_PATHS.concat(SRC.CSS + '/**'), ['css'] );
+	gulp.watch( WATCH_PATHS.concat(SRC.IMG + '/**'), ['images'] );
+	gulp.watch( WATCH_PATHS.concat(SRC.HTML + '/**'), ['html'] );
+	gulp.watch( WATCH_PATHS.concat(SRC.STATIC + '/**'), ['static'] );
 });
 
 /* Clean dist/, optimize images & run default task */
