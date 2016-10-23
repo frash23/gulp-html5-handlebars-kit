@@ -60,7 +60,8 @@ const HTMLMIN_OPTS = {
 	removeComments: true,
 	minifyJS: true,
 	minifyCSS: true,
-	minifyURLs: true
+	minifyURLs: true,
+	quoteCharacter: '"'
 };
 
 const BABEL_OPTS = {
