@@ -1,6 +1,7 @@
 'use strict';
 
 const fs          = require('fs');
+const path        = require('path');
 const rimraf      = require('rimraf');
 const gulp        = require('gulp');
 const gutil       = require('gulp-util');
@@ -67,7 +68,7 @@ const HTMLMIN_OPTS = {
 const BABEL_OPTS = {
 	cacheDirectory: true,
 	presets: ['es2015'],
-	plugins: [ [ "transform-runtime", { polyfill: false }] ]
+	plugins: [ [ 'transform-runtime', { polyfill: false } ] ]
 }
 
 const WEBPACK_OPTS = {
@@ -80,6 +81,7 @@ const WEBPACK_OPTS = {
 	module: {
 		loaders: [ {
 			loader: 'babel',
+			include: [ path.resolve(__dirname, SRC.JS) ],
 			query: BABEL_OPTS
 		} ],
 		cache: true
