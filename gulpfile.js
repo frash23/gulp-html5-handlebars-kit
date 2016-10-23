@@ -85,7 +85,8 @@ const WEBPACK_OPTS = {
 			query: BABEL_OPTS
 		} ],
 		cache: true
-	}
+	},
+	resolve: { root: [ path.resolve(__dirname, SRC.JS) ] }
 };
 
 const UGLIFY_OPTS = {

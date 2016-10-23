@@ -1,6 +1,4 @@
-"use strict"; /* Use strict mode to improve performance and prevent mistakes */
-
-const get = require('./get');
+import get from 'get';
 
 get('/static/test.txt').then(res=> {
 	console.log(res);
